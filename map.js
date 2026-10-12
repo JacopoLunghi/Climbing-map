@@ -15,6 +15,14 @@ function pinIcon(variant){
     </svg></div>`;
   return L.divIcon({ html, className:'', iconSize:[30,40], iconAnchor:[15,40], popupAnchor:[0,-38] });
 }
+function multipitchIcon(){
+  return L.icon({
+    iconUrl: 'images/trad_icon.png',   // path relative to your index.html
+    iconSize: [36, 36],                 // displayed size in px
+    iconAnchor: [18, 36],               // point of the image that sits on the coordinate
+    popupAnchor: [0, -34]               // where the popup opens relative to the anchor
+  });
+}
 
 function typeArray(type){
   if(Array.isArray(type)) return type;
@@ -96,7 +104,8 @@ function showMultipitchRoutePins(c){
   const routes = (c.multipitchRoutes || []).filter(r => r.lat!==undefined && r.lng!==undefined);
   if(!routes.length) return;
   routes.forEach(r => {
-    const marker = L.marker([r.lat, r.lng], { icon:pinIcon('route') }).addTo(map);
+    const icon = typeIncludes(c.type, 'multipitch') ? multipitchIcon() : pinIcon();
+    const marker = L.marker([c.lat, c.lng], { icon }).addTo(map).bindPopup(popupHTML(c));
     marker.bindPopup(`<div class="pop"><h3>${esc(r.name || 'Multipitch route')}</h3><div class="row"><span>part of</span><span>${esc(c.name)}</span></div></div>`);
     marker.on('click', e => L.DomEvent.stopPropagation(e));
     multipitchSubMarkers.push(marker);
